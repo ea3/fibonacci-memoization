@@ -21,6 +21,7 @@ def clock(func):
     return clocked
 
 
+@functools.lru_cache()
 @clock
 def fibonacci(n):
     if n < 2:
