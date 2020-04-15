@@ -3,15 +3,23 @@ import functools
 
 
 def clock(func):
-    def clocked(*args):
+    @functools.wraps(func)
+    def clocked(*args, **kwargs):
         t0 = time.perf_counter()
-        result = func(*args)
+        result = func(*args, *kwargs)
         elapsed = time.perf_counter() - t0
         name = func.__name__
+        arg_lst = []
+        if args:
+            arg_lst.append(', '.join(repr(arg) for arg in args))
+        if kwargs:
+            pairs = ['%s=%r' % (k, w) for k, w in sorted(kwargs.items())]
+            arg_lst.append(', '.join(arg_lst))
         arg_str = ', '.join(repr(arg) for arg in args)
         print('[%0.8fs] %s(%s) -> %r' % (elapsed, name, arg_str, result))
         return result
     return clocked
+
 
 @clock
 def fibonacci(n):
